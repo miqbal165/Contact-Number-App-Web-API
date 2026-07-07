@@ -3,22 +3,32 @@ using ContactNumberWebAPI.DTOs.ContactCategories;
 using ContactNumberWebAPI.Models;
 using ContactNumberWebAPI.Repositories.Interfaces;
 using ContactNumberWebAPI.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContactNumberWebAPI.Services.Implementations;
 
 public class ContactCategoryService : IContactCategoryService
 {
     private readonly IRepository<ContactCategory> _contactCategoryRepository;
-
-    public ContactCategoryService(IRepository<ContactCategory> contactCategoryRepository)
+    private readonly IRepository<Contact> _contactRepository;
+    
+    public ContactCategoryService(
+        IRepository<ContactCategory> contactCategoryRepository, 
+        IRepository<Contact> contactRepository)
     {
         _contactCategoryRepository = contactCategoryRepository;
+        _contactRepository = contactRepository;
     }
 
 
-    public Task<ServiceResult<IReadOnlyList<ContactCategoryResponse>>> GetAllAsync()
+    public async Task<ServiceResult<IReadOnlyList<ContactCategoryResponse>>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        List<ContactCategory> categories = await _contactCategoryRepository.Query()
+            .AsNoTracking()
+            .OrderBy(contactCategory => contactCategory.Name)
+            .ToListAsync();
+
+        return null;
     }
 
     public Task<ServiceResult<ContactCategoryResponse>> GetByIdAsync(Guid id)
