@@ -1,9 +1,23 @@
+using ContactNumberWebAPI.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+AuthenticationConfiguration.AddJwtAuthentication(
+    builder.Services,
+    builder.Configuration);
+
+ApplicationConfiguration.AddApplicationServices(
+    builder.Services, 
+    builder.Configuration);
+
+SwaggerConfiguration.AddSwaggerWithJwt(builder.Services);
 
 var app = builder.Build();
 
@@ -20,4 +34,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 app.Run();
