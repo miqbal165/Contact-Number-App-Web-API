@@ -21,13 +21,13 @@ public static class ApplicationConfiguration
         });
 
         services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
-        // services.AddAutoMapper(typeof(MappingProfile));
+        services.AddAutoMapper(typeof(MappingProfile));
 
         services.AddScoped<JwtTokenGenerator>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IAuthService, AuthService>();
-        // services.AddScoped<IContactCategoryService, ContactCategoryService>();
-        // services.AddScoped<IContactService, ContactService>();
+        services.AddScoped<IContactCategoryService, ContactCategoryService>();
+        services.AddScoped<IContactService, ContactService>();
 
         return services;
     }
