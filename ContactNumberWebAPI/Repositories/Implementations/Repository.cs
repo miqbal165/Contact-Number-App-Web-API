@@ -32,22 +32,18 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         return await _dbSet.AnyAsync(predicate, cancellationToken);
     }
-
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await _dbSet.AddAsync(entity, cancellationToken);
     }
-    
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }
-
     public void Update(TEntity entity)
     {
         _dbSet.Update(entity);
     }
-
     public void Remove(TEntity entity)
     {
         _dbSet.Remove(entity);
