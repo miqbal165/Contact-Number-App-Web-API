@@ -35,8 +35,8 @@ public class ContactsController : ControllerBase
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
-        ServiceResult<PagedResult<ContactResponse>> result =
-            await _contactService.GetAllAsync(
+        ServiceResult<PagedResult<ContactResponse>> result = await _contactService
+            .GetAllAsync(
                 search,
                 categoryId,
                 page,
@@ -54,10 +54,7 @@ public class ContactsController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        ServiceResult<ContactResponse> result =
-            await _contactService.GetByIdAsync(
-                id,
-                cancellationToken);
+        ServiceResult<ContactResponse> result = await _contactService.GetByIdAsync(id, cancellationToken);
 
         return StatusCode(
             (int)result.Status,
@@ -70,24 +67,16 @@ public class ContactsController : ControllerBase
         ContactCreateRequest request,
         CancellationToken cancellationToken)
     {
-        ValidationResult validationResult =
-            await _createValidator.ValidateAsync(
-                request,
-                cancellationToken);
+        ValidationResult validationResult = await _createValidator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            IReadOnlyList<string> errors =
-                ValidationErrorMapper.ToMessages(validationResult);
+            IReadOnlyList<string> errors = ValidationErrorMapper.ToMessages(validationResult);
 
-            return BadRequest(
-                ApiResponse<object>.ValidationFailure(errors));
+            return BadRequest(ApiResponse<object>.ValidationFailure(errors));
         }
 
-        ServiceResult<ContactResponse> result =
-            await _contactService.CreateAsync(
-                request,
-                cancellationToken);
+        ServiceResult<ContactResponse> result = await _contactService.CreateAsync(request, cancellationToken);
 
         if (!result.Success || result.Data is null)
         {
@@ -110,25 +99,16 @@ public class ContactsController : ControllerBase
         ContactUpdateRequest request,
         CancellationToken cancellationToken)
     {
-        ValidationResult validationResult =
-            await _updateValidator.ValidateAsync(
-                request,
-                cancellationToken);
+        ValidationResult validationResult = await _updateValidator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            IReadOnlyList<string> errors =
-                ValidationErrorMapper.ToMessages(validationResult);
+            IReadOnlyList<string> errors = ValidationErrorMapper.ToMessages(validationResult);
 
-            return BadRequest(
-                ApiResponse<object>.ValidationFailure(errors));
+            return BadRequest(ApiResponse<object>.ValidationFailure(errors));
         }
 
-        ServiceResult<ContactResponse> result =
-            await _contactService.UpdateAsync(
-                id,
-                request,
-                cancellationToken);
+        ServiceResult<ContactResponse> result = await _contactService.UpdateAsync(id, request, cancellationToken);
 
         return StatusCode(
             (int)result.Status,
@@ -141,13 +121,11 @@ public class ContactsController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        ServiceResult<object> result =
-            await _contactService.DeleteAsync(
-                id,
-                cancellationToken);
+        ServiceResult<object> result = await _contactService.DeleteAsync(id, cancellationToken);
 
         return StatusCode(
             (int)result.Status,
-            ApiResponse<object>.FromServiceResult(result));
+            ApiResponse<object>
+                .FromServiceResult(result));
     }
 }

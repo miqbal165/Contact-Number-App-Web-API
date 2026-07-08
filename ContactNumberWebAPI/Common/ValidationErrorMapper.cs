@@ -4,8 +4,7 @@ namespace ContactNumberWebAPI.Common;
 
 public static class ValidationErrorMapper
 {
-    public static IReadOnlyList<string> ToMessages(
-        ValidationResult validationResult)
+    public static IReadOnlyList<string> ToMessages(ValidationResult validationResult)
     {
         return validationResult.Errors
             .Select(error => error.ErrorMessage)

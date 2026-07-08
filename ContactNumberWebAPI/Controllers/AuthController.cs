@@ -31,56 +31,35 @@ public class AuthController : ControllerBase
         RegisterRequest request,
         CancellationToken cancellationToken)
     {
-        ValidationResult validationResult =
-            await _registerValidator.ValidateAsync(
-                request,
-                cancellationToken);
+        ValidationResult validationResult = await _registerValidator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            IReadOnlyList<string> errors =
-                ValidationErrorMapper.ToMessages(validationResult);
+            IReadOnlyList<string> errors = ValidationErrorMapper.ToMessages(validationResult);
 
-            return BadRequest(
-                ApiResponse<object>.ValidationFailure(errors));
+            return BadRequest(ApiResponse<object>.ValidationFailure(errors));
         }
 
-        ServiceResult<AuthResponse> result =
-            await _authService.RegisterAsync(
-                request,
-                cancellationToken);
+        ServiceResult<AuthResponse> result = await _authService.RegisterAsync(request, cancellationToken);
 
-        return StatusCode(
-            (int)result.Status,
-            ApiResponse<AuthResponse>.FromServiceResult(result));
+        return StatusCode((int)result.Status, ApiResponse<AuthResponse>.FromServiceResult(result));
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<ApiResponse<AuthResponse>>> Login(
-        LoginRequest request,
+    public async Task<ActionResult<ApiResponse<AuthResponse>>> Login(LoginRequest request, 
         CancellationToken cancellationToken)
     {
-        ValidationResult validationResult =
-            await _loginValidator.ValidateAsync(
-                request,
-                cancellationToken);
+        ValidationResult validationResult = await _loginValidator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            IReadOnlyList<string> errors =
-                ValidationErrorMapper.ToMessages(validationResult);
+            IReadOnlyList<string> errors = ValidationErrorMapper.ToMessages(validationResult);
 
-            return BadRequest(
-                ApiResponse<object>.ValidationFailure(errors));
+            return BadRequest(ApiResponse<object>.ValidationFailure(errors));
         }
 
-        ServiceResult<AuthResponse> result =
-            await _authService.LoginAsync(
-                request,
-                cancellationToken);
+        ServiceResult<AuthResponse> result = await _authService.LoginAsync(request, cancellationToken);
 
-        return StatusCode(
-            (int)result.Status,
-            ApiResponse<AuthResponse>.FromServiceResult(result));
+        return StatusCode((int)result.Status, ApiResponse<AuthResponse>.FromServiceResult(result));
     }
 }

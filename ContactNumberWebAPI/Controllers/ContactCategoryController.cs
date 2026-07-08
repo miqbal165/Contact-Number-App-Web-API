@@ -31,8 +31,8 @@ public class ContactCategoriesController : ControllerBase
     public async Task<ActionResult<ApiResponse<IReadOnlyList<ContactCategoryResponse>>>> GetAll(
         CancellationToken cancellationToken)
     {
-        ServiceResult<IReadOnlyList<ContactCategoryResponse>> result =
-            await _categoryService.GetAllAsync(cancellationToken);
+        ServiceResult<IReadOnlyList<ContactCategoryResponse>> result = await _categoryService
+            .GetAllAsync(cancellationToken);
 
         return StatusCode(
             (int)result.Status,
@@ -45,10 +45,7 @@ public class ContactCategoriesController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        ServiceResult<ContactCategoryResponse> result =
-            await _categoryService.GetByIdAsync(
-                id,
-                cancellationToken);
+        ServiceResult<ContactCategoryResponse> result = await _categoryService.GetByIdAsync(id, cancellationToken);
 
         return StatusCode(
             (int)result.Status,
@@ -61,24 +58,16 @@ public class ContactCategoriesController : ControllerBase
         ContactCategoryCreateRequest request,
         CancellationToken cancellationToken)
     {
-        ValidationResult validationResult =
-            await _createValidator.ValidateAsync(
-                request,
-                cancellationToken);
+        ValidationResult validationResult = await _createValidator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            IReadOnlyList<string> errors =
-                ValidationErrorMapper.ToMessages(validationResult);
+            IReadOnlyList<string> errors = ValidationErrorMapper.ToMessages(validationResult);
 
-            return BadRequest(
-                ApiResponse<object>.ValidationFailure(errors));
+            return BadRequest(ApiResponse<object>.ValidationFailure(errors));
         }
 
-        ServiceResult<ContactCategoryResponse> result =
-            await _categoryService.CreateAsync(
-                request,
-                cancellationToken);
+        ServiceResult<ContactCategoryResponse> result = await _categoryService.CreateAsync(request, cancellationToken);
 
         if (!result.Success || result.Data is null)
         {
@@ -101,25 +90,17 @@ public class ContactCategoriesController : ControllerBase
         ContactCategoryUpdateRequest request,
         CancellationToken cancellationToken)
     {
-        ValidationResult validationResult =
-            await _updateValidator.ValidateAsync(
-                request,
-                cancellationToken);
+        ValidationResult validationResult = await _updateValidator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
-            IReadOnlyList<string> errors =
-                ValidationErrorMapper.ToMessages(validationResult);
+            IReadOnlyList<string> errors = ValidationErrorMapper.ToMessages(validationResult);
 
-            return BadRequest(
-                ApiResponse<object>.ValidationFailure(errors));
+            return BadRequest(ApiResponse<object>.ValidationFailure(errors));
         }
 
-        ServiceResult<ContactCategoryResponse> result =
-            await _categoryService.UpdateAsync(
-                id,
-                request,
-                cancellationToken);
+        ServiceResult<ContactCategoryResponse> result = await _categoryService
+            .UpdateAsync(id, request, cancellationToken);
 
         return StatusCode(
             (int)result.Status,
@@ -132,13 +113,8 @@ public class ContactCategoriesController : ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        ServiceResult<object> result =
-            await _categoryService.DeleteAsync(
-                id,
-                cancellationToken);
+        ServiceResult<object> result = await _categoryService.DeleteAsync(id, cancellationToken);
 
-        return StatusCode(
-            (int)result.Status,
-            ApiResponse<object>.FromServiceResult(result));
+        return StatusCode((int)result.Status, ApiResponse<object>.FromServiceResult(result));
     }
 }
