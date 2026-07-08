@@ -8,11 +8,11 @@ public class ServiceResult<T>
 
     public T? Data { get; init; }
 
-    public IReadOnlyList<string> Errors { get; init; } = [];
-
     public ServiceResultStatus Status { get; init; }
 
-    public static ServiceResult<T> Ok(T data, string message = "Success")
+    public static ServiceResult<T> Ok(
+        T data,
+        string message = "Berhasil.")
     {
         return new ServiceResult<T>
         {
@@ -23,7 +23,9 @@ public class ServiceResult<T>
         };
     }
 
-    public static ServiceResult<T> Created(T data, string message = "Created")
+    public static ServiceResult<T> Created(
+        T data,
+        string message = "Data berhasil dibuat.")
     {
         return new ServiceResult<T>
         {
@@ -36,14 +38,13 @@ public class ServiceResult<T>
 
     public static ServiceResult<T> Fail(
         string message,
-        ServiceResultStatus status = ServiceResultStatus.BadRequest,
-        IReadOnlyList<string>? errors = null)
+        ServiceResultStatus status = ServiceResultStatus.BadRequest)
     {
         return new ServiceResult<T>
         {
             Success = false,
             Message = message,
-            Errors = errors ?? [],
+            Data = default,
             Status = status
         };
     }
