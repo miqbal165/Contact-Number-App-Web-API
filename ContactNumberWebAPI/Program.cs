@@ -1,5 +1,6 @@
 using ContactNumberWebAPI.Extensions;
 using ContactNumberWebAPI.Middleware;
+using ContactNumberWebAPI.Seeders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ SwaggerConfiguration.AddSwagger(
     builder.Services);
 
 WebApplication app = builder.Build();
+
+await DatabaseSeeder.SeedAsync(app.Services);
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
