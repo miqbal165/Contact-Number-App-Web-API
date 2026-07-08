@@ -11,6 +11,7 @@ namespace ContactNumberWebAPI.Helpers;
 public class JwtTokenGenerator
 {
     private readonly JwtSettings _jwtSettings;
+
     public JwtTokenGenerator(IOptions<JwtSettings> jwtOptions)
     {
         _jwtSettings = jwtOptions.Value;
@@ -26,9 +27,12 @@ public class JwtTokenGenerator
             new Claim(ClaimTypes.Role, user.Role)
         ];
 
-        SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+        SymmetricSecurityKey securityKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_jwtSettings.Key));
 
-        SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        SigningCredentials credentials = new SigningCredentials(
+            securityKey,
+            SecurityAlgorithms.HmacSha256);
 
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
@@ -39,4 +43,5 @@ public class JwtTokenGenerator
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
 }

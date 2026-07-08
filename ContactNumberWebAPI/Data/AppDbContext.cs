@@ -37,12 +37,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(user => user.CreatedAt).IsRequired();
         });
 
+        modelBuilder.Entity<ContactCategory>(entity =>
+        {
+            entity.HasKey(category => category.Id);
+            entity.Property(category => category.Id).ValueGeneratedNever();
+            entity.HasIndex(category => category.Name).IsUnique();
+            entity.Property(category => category.Name).HasMaxLength(100).IsRequired();
+            entity.Property(category => category.CreatedAt).IsRequired();
+        });
+
         modelBuilder.Entity<Contact>(entity =>
         {
             entity.HasKey(contact => contact.Id);
             entity.Property(contact => contact.Id).ValueGeneratedNever();
             entity.Property(contact => contact.Name).HasMaxLength(100).IsRequired();
-            entity.Property(contact => contact.PhoneNumber).HasMaxLength(15).IsRequired();
+            entity.Property(contact => contact.PhoneNumber).HasMaxLength(30).IsRequired();
             entity.Property(contact => contact.Email).HasMaxLength(150);
             entity.Property(contact => contact.Address).HasMaxLength(250);
             entity.Property(contact => contact.CreatedAt).IsRequired();
@@ -52,21 +61,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasForeignKey(contact => contact.ContactCategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
-
-        modelBuilder.Entity<ContactCategory>(entity =>
-        {
-            entity.HasKey(contactCategory => contactCategory.Id);
-            entity.Property(contactCategory => contactCategory.Id).ValueGeneratedNever();
-            entity.HasIndex(category => category.Name).IsUnique();
-            entity.Property(category => category.Name).HasMaxLength(100).IsRequired();
-            entity.Property(category => category.CreatedAt).IsRequired();
-        });
     }
-
 
     private void ApplyAuditInformation()
     {
-        DateTime now = DateTime.Now;
+        DateTime now = DateTime.UtcNow;
+
         foreach (var entry in ChangeTracker.Entries())
         {
             if (entry.Entity is not User &&
@@ -89,6 +89,4 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             }
         }
     }
-    
-    
 }

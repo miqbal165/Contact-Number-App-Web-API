@@ -5,9 +5,27 @@ namespace ContactNumberWebAPI.Services.Interfaces;
 
 public interface IContactService
 {
-    Task<ServiceResult<PagedResult<ContactResponse>>> GetAllAsync(string? search, Guid? categoryId, int page, int pageSize);
-    Task<ServiceResult<ContactResponse>> GetByIdAsync(Guid id);
-    Task<ServiceResult<ContactResponse>> CreateAsync(ContactCreateRequest request);
-    Task<ServiceResult<ContactResponse>> UpdateAsync(Guid id, ContactUpdateRequest request);
-    Task<ServiceResult<object>> DeleteAsync(Guid id);
+    Task<ServiceResult<PagedResult<ContactResponse>>> GetAllAsync(
+        string? search,
+        Guid? categoryId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
+    Task<ServiceResult<ContactResponse>> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<ServiceResult<ContactResponse>> CreateAsync(
+        ContactCreateRequest request, 
+        CancellationToken cancellationToken = default);
+
+    Task<ServiceResult<ContactResponse>> UpdateAsync(
+        Guid id,
+        ContactUpdateRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<ServiceResult<object>> DeleteAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
 }

@@ -14,10 +14,10 @@ public class MappingProfile : Profile
         CreateMap<ContactCategoryUpdateRequest, ContactCategory>();
 
         CreateMap<Contact, ContactResponse>()
-            .ForMember(
-                destination => destination.ContactCategoryName,
-                option => option.MapFrom(source => source.ContactCategory 
-                                                   == null ? string.Empty : source.ContactCategory.Name));
+            .ForMember(destination => destination.ContactCategoryName,
+                option 
+                    => option.MapFrom(source => source.ContactCategory == null ? string.Empty 
+                        : source.ContactCategory.Name));
 
         CreateMap<ContactCreateRequest, Contact>();
         CreateMap<ContactUpdateRequest, Contact>();

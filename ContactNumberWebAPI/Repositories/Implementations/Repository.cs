@@ -15,8 +15,8 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         _dbContext = dbContext;
         _dbSet = _dbContext.Set<TEntity>();
     }
-    
-    public IQueryable<TEntity?> Query()
+
+    public IQueryable<TEntity> Query()
     {
         return _dbSet.AsQueryable();
     }
@@ -26,7 +26,9 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         return await _dbSet.FindAsync([id], cancellationToken);
     }
 
-    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<bool> AnyAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         return await _dbSet.AnyAsync(predicate, cancellationToken);
     }

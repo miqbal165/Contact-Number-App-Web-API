@@ -13,36 +13,42 @@ public class AuthService : IAuthService
     private readonly IRepository<User> _userRepository;
     private readonly JwtTokenGenerator _jwtTokenGenerator;
 
-    public AuthService(IRepository<User> userRepository, JwtTokenGenerator jwtTokenGenerator)
+    public AuthService(
+        IRepository<User> userRepository,
+        JwtTokenGenerator jwtTokenGenerator)
     {
         _userRepository = userRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
     }
-    
-    public async Task<ServiceResult<AuthResponse>> RegisterAsync(RegisterRequest request)
+
+    public async Task<ServiceResult<AuthResponse>> RegisterAsync(
+        RegisterRequest request,
+        CancellationToken cancellationToken = default)
     {
-        string email = request.Email.Trim().ToLower();
-        bool emailExists = await _userRepository.AnyAsync(user => user.Email == email);
+        string normalizedEmail = request.Email.Trim().ToLowerInvariant();
+
+        bool emailExists = await _userRepository.AnyAsync(
+            user => user.Email == normalizedEmail,
+            cancellationToken);
 
         if (emailExists)
         {
-            return ServiceResult<AuthResponse>
-                .Fail(
-                    "Email sudah terdaftar.",
-                    ServiceResultStatus.Conflict
-                );
+            return ServiceResult<AuthResponse>.Fail(
+                "Email sudah terdaftar.",
+                ServiceResultStatus.Conflict);
         }
 
         User user = new User
         {
             FullName = request.FullName.Trim(),
-            Email = email,
+            Email = normalizedEmail,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             Role = "User"
         };
 
-        await _userRepository.AddAsync(user);
-        await _userRepository.SaveChangesAsync();
+        await _userRepository.AddAsync(user, cancellationToken);
+
+        await _userRepository.SaveChangesAsync(cancellationToken);
 
         return ServiceResult<AuthResponse>.Created(
                 new AuthResponse
@@ -56,17 +62,25 @@ public class AuthService : IAuthService
             );
     }
 
-    public async Task<ServiceResult<AuthResponse>> LoginAsync(LoginRequest request)
+    public async Task<ServiceResult<AuthResponse>> LoginAsync(
+        LoginRequest request,
+        CancellationToken cancellationToken = default)
     {
-        string email = request.Email.Trim().ToLower();
-        User? user = await _userRepository.Query().FirstOrDefaultAsync(user => user.Email == email);
+        string normalizedEmail = request.Email.Trim().ToLowerInvariant();
 
-        if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        User? user = await _userRepository.Query()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                user => user.Email == normalizedEmail,
+                cancellationToken);
+
+        bool passwordValid = user is not null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+
+        if (!passwordValid || user is null)
         {
             return ServiceResult<AuthResponse>.Fail(
-                "Email atau password salah",
-                ServiceResultStatus.Unauthorized
-            );
+                "Email atau password salah.",
+                ServiceResultStatus.Unauthorized);
         }
 
         return ServiceResult<AuthResponse>.Ok(
