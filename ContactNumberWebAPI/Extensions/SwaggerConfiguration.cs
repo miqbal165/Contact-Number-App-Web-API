@@ -12,7 +12,7 @@ public class SwaggerConfiguration
         {
             options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "Secure Contact API",
+                Title = "Contact Number API",
                 Version = "v1"
             });
 
